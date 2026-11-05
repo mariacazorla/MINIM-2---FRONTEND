@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  max-width: 560px;
+}
+h2 {
+  margin-top: 1.5rem;
+}
+li {
+  margin-bottom: 0.5rem;
+  overflow-wrap: anywhere;
+}

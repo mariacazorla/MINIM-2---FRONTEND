@@ -26,6 +26,11 @@ export class DateService {
     return this.http.get<DatesPage>(this.baseUrl, { params });
   }
 
+  /** GET /dates/:id: comprobar la cita antes de crear una solicitud */
+  getDate(id: string): Observable<DateResponse> {
+    return this.http.get<DateResponse>(`${this.baseUrl}/${id}`);
+  }
+
   /** POST /dates */
   createDate(payload: CreateDate): Observable<DateResponse> {
     return this.http.post<DateResponse>(this.baseUrl, payload);

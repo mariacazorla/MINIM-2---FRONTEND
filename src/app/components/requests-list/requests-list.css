@@ -1,0 +1,15 @@
+.toolbar {
+  flex-wrap: wrap;
+}
+.toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.toolbar input[type='checkbox'] {
+  width: auto;
+}
+td small {
+  display: block;
+  overflow-wrap: anywhere;
+}

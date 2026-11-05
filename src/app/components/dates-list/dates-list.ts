@@ -130,6 +130,10 @@ export class DatesList implements OnInit {
     this.run(this.dateService.updateStatus(date._id, status));
   }
 
+  canRequest(date: StudateDate): boolean {
+    return date.users.some(user => user._id === this.myId());
+  }
+
   extend(date: StudateDate): void {
     this.run(this.dateService.extendDate(date._id));
   }

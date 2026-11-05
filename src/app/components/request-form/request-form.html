@@ -1,0 +1,58 @@
+<h1>{{ id() ? 'Detalle de la solicitud' : 'Nueva solicitud' }}</h1>
+<p>
+  <a routerLink="/dates/requests">Volver a solicitudes</a> ·
+  <a routerLink="/dates">Volver a Dates</a>
+</p>
+@if (error()) {
+  <p class="alert" role="alert">{{ error() }}</p>
+}
+@if (loading()) {
+  <p class="muted">Cargando...</p>
+} @else if (!loadFailed()) {
+  @if (relatedDate(); as date) {
+    <p>
+      Cita entre
+      @for (person of date.users; track person._id; let last = $last) {
+        {{ person.name }}{{ last ? '' : ' y ' }}
+      }
+    </p>
+  }
+  @if (request(); as request) {
+    <p>
+      Estado: {{ labels[request.status] }} · {{ request.deleted ? 'Archivada' : 'Sin archivar' }}
+    </p>
+    <p class="muted">Cita: {{ request.date }}</p>
+  }
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <label>Título *<input formControlName="title" /></label>
+    @if (form.controls.title.touched && form.controls.title.invalid) {
+      <small class="field-error">Escribe un título</small>
+    }
+    <label>Texto *<textarea formControlName="body" rows="5"></textarea></label>
+    @if (form.controls.body.touched && form.controls.body.invalid) {
+      <small class="field-error">Escribe el texto de la solicitud</small>
+    }
+    <div class="form-actions">
+      @if (canSave()) {
+        <button type="submit" [disabled]="form.invalid || saving()">
+          {{ saving() ? 'Guardando...' : 'Guardar' }}
+        </button>
+      }
+      <a routerLink="/dates/requests">Volver</a>
+    </div>
+  </form>
+  @if (request(); as request) {
+    <h2>Historial</h2>
+    <ul>
+      @for (entry of request.history; track $index) {
+        <li>
+          {{ entry.changedAt | date: 'dd/MM/yyyy HH:mm' }} — {{ entry.message }} ({{
+            entry.byAdmin ? 'Administrador' : 'Usuario'
+          }})
+        </li>
+      } @empty {
+        <li>Sin entradas</li>
+      }
+    </ul>
+  }
+}

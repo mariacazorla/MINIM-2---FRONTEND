@@ -6,6 +6,8 @@ import { GradeForm } from './components/grade-form/grade-form';
 import { GradesList } from './components/grades-list/grades-list';
 import { Login } from './components/login/login';
 import { Register } from './components/register/register';
+import { RequestsList } from './components/requests-list/requests-list';
+import { RequestForm } from './components/request-form/request-form';
 import { UserForm } from './components/user-form/user-form';
 import { UsersList } from './components/users-list/users-list';
 import { adminGuard, authGuard, guestGuard } from './guards/auth.guard';
@@ -23,6 +25,24 @@ export const routes: Routes = [
   // Dates: cualquier usuario con sesión (cada uno ve los suyos; el admin, todos)
   { path: 'dates', component: DatesList, canActivate: [authGuard], title: 'Dates' },
   { path: 'dates/new', component: DateForm, canActivate: [authGuard], title: 'Nuevo Date' },
+  {
+    path: 'dates/requests',
+    component: RequestsList,
+    canActivate: [authGuard],
+    title: 'Solicitudes',
+  },
+  {
+    path: 'dates/requests/:id',
+    component: RequestForm,
+    canActivate: [authGuard],
+    title: 'Detalle de solicitud',
+  },
+  {
+    path: 'dates/:dateId/requests/new',
+    component: RequestForm,
+    canActivate: [authGuard],
+    title: 'Nueva solicitud',
+  },
 
   // Backoffice: solo admin
   { path: 'users', component: UsersList, canActivate: [authGuard, adminGuard], title: 'Usuarios' },

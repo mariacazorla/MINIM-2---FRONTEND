@@ -1,5 +1,6 @@
 <div class="page-header">
   <h1>{{ isAdmin() ? 'Dates' : 'Mis Dates' }}</h1>
+  <a class="button secondary" routerLink="/dates/requests">{{ isAdmin() ? 'Solicitudes' : 'Mis solicitudes' }}</a>
   <a class="button" routerLink="/dates/new">Nuevo Date</a>
 </div>
 
@@ -100,6 +101,9 @@
               }
             </td>
             <td class="actions">
+              @if (canRequest(date)) {
+                <a class="button secondary" [routerLink]="['/dates', date._id, 'requests/new']">Nueva solicitud</a>
+              }
               <button type="button" class="secondary" [disabled]="date.extended" (click)="extend(date)">
                 Prórroga +24 h
               </button>

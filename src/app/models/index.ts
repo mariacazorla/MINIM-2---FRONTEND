@@ -35,3 +35,15 @@ export type {
   StudateDate,
 } from './date.model';
 export { DATE_STATUS_LABELS } from './date.model';
+export type {
+  Solicitud,
+  RequestHistory,
+  RequestStatus,
+  RequestListItem,
+  RequestsPage,
+  RequestResponse,
+  RequestFilters,
+  CreateRequest,
+  UpdateRequest,
+} from './request.model';
+export { REQUEST_STATUS_LABELS } from './request.model';

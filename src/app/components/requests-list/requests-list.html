@@ -1,0 +1,103 @@
+<div class="page-header">
+  <h1>{{ isAdmin() ? 'Solicitudes' : 'Mis solicitudes' }}</h1>
+  <a class="button" routerLink="/dates">Crear desde una cita</a>
+</div>
+
+<form class="toolbar" (ngSubmit)="loadPage(1)">
+  <input
+    aria-label="Buscar solicitudes"
+    name="search"
+    placeholder="Buscar en título o texto"
+    maxlength="100"
+    [(ngModel)]="search"
+  />
+  <select
+    aria-label="Estado de la solicitud"
+    name="status"
+    [(ngModel)]="status"
+    (ngModelChange)="loadPage(1)"
+  >
+    <option value="">Todos los estados</option>
+    @for (value of statuses; track value) {
+      <option [value]="value">{{ labels[value] }}</option>
+    }
+  </select>
+  <label
+    ><input type="checkbox" name="archived" [(ngModel)]="archived" (ngModelChange)="loadPage(1)" />
+    Archivadas</label
+  >
+  <button type="submit">Buscar</button>
+</form>
+
+@if (error()) {
+  <p class="alert" role="alert">{{ error() }}</p>
+}
+@if (loading()) {
+  <p class="muted">Cargando...</p>
+} @else if (!error()) {
+  <p class="muted">{{ total() }} solicitudes</p>
+  <div class="table-wrap">
+    <table class="stack">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Cita</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (request of requests(); track request._id) {
+          <tr>
+            <td data-label="Título">{{ request.title }}</td>
+            <td data-label="Autor">{{ request.user?.name ?? 'Usuario eliminado' }}</td>
+            <td data-label="Cita">
+              @if (request.date; as date) {
+                <span>{{ dateLabels[date.status] }}</span
+                ><small class="muted">{{ date._id }}</small>
+              } @else {
+                Cita eliminada
+              }
+            </td>
+            <td data-label="Estado">{{ labels[request.status] }}</td>
+            <td data-label="Fecha">{{ request.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td class="actions">
+              <a class="button secondary" [routerLink]="['/dates/requests', request._id]">
+                {{ canManage(request) && !request.deleted ? 'Ver / editar' : 'Ver detalle' }}
+              </a>
+              @if (canManage(request)) {
+                <button
+                  type="button"
+                  class="danger"
+                  [disabled]="busy()"
+                  (click)="askRemove(request)"
+                >
+                  {{ request.deleted ? 'Eliminar definitivamente' : 'Archivar' }}
+                </button>
+              }
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td class="empty" colspan="6">No hay solicitudes con estos filtros</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <app-pagination [page]="page()" [totalPages]="totalPages()" (pageChange)="loadPage($event)" />
+}
+<app-confirm-modal
+  [open]="selected() !== null"
+  [title]="selected()?.deleted ? 'Eliminar solicitud' : 'Archivar solicitud'"
+  [message]="
+    selected()?.deleted
+      ? 'Se eliminará definitivamente esta solicitud.'
+      : 'La solicitud pasará a archivadas y dejará de poder editarse.'
+  "
+  [confirmText]="selected()?.deleted ? 'Eliminar' : 'Archivar'"
+  (confirmed)="confirmRemove()"
+  (cancelled)="selected.set(null)"
+/>
